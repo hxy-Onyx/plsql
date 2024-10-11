@@ -1,0 +1,187 @@
+1.plsql的基本语法
+DECLARE
+    -- 声明部分：声明变量、常量、游标等
+BEGIN
+    -- 执行部分：包含 SQL 语句和 PL/SQL 语句
+EXCEPTION
+    -- 异常处理部分：处理运行时错误
+END;
+
+
+/*
+plsql的命名规则
+1. 变量名称的基本规则
+长度限制: 变量名称的最大长度是 30 个字符。
+开始字符: 变量名称必须以 字母 开头（可以是英文大写或小写字母）。
+字符组成: 变量名称可以包含字母、数字、下划线（_），但不能包含其他符号（如 $、%、& 等），也不能包含空格。
+区分大小写: PL/SQL 不区分大小写，即 my_var 和 MY_VAR 被视为相同的变量名称。
+关键字: 变量名称不能与PL/SQL的保留字或关键字相同（如 SELECT、INSERT、DATE 等），否则会引起编译错误。
+2. 变量命名的最佳实践
+描述性: 使用有意义、描述性的名称，便于代码的可读性。例如，命名为 v_employee_name 比 v1 更具可读性。
+使用前缀: 通常开发者会使用变量前缀来表示变量的类型或用途，例如：
+v_ 用于一般变量，如 v_salary。
+n_ 用于数值类型变量，如 n_total.
+c_ 用于字符类型变量，如 c_name。
+d_ 用于日期类型变量，如 d_hire_date。
+*/
+
+2.变量与数据类型
+常用数据类型：
+标量类型：如 NUMBER、VARCHAR2、DATE、BOOLEAN。
+复合类型：如记录（RECORD）、集合（TABLE、VARRAY）。
+引用类型：如游标变量。
+大对象类型：如 BLOB、CLOB
+
+2.1标量数据类型
+2.1.1数值类型（NUMBER）
+DECLARE
+   -- 数值类型
+   v_number NUMBER := 100;
+   v_integer INTEGER := 10;
+   v_float   BINARY_FLOAT := 12.34;
+
+   -- 字符类型
+   v_char CHAR(10) := 'A';
+   v_varchar VARCHAR2(20) := 'Hello PL/SQL';
+
+   -- 布尔类型
+   v_boolean BOOLEAN := TRUE;
+
+   -- 日期类型
+   v_date    DATE := SYSDATE;
+
+   -- 时间戳类型
+   v_timestamp TIMESTAMP := SYSTIMESTAMP;
+
+BEGIN
+   -- 输出数值类型
+   DBMS_OUTPUT.PUT_LINE('Number: ' || v_number);
+   DBMS_OUTPUT.PUT_LINE('Integer: ' || v_integer);
+   DBMS_OUTPUT.PUT_LINE('Float: ' || v_float);
+
+   -- 输出字符类型
+   DBMS_OUTPUT.PUT_LINE('Char: ' || v_char);
+   DBMS_OUTPUT.PUT_LINE('Varchar: ' || v_varchar);
+
+   -- 输出布尔类型
+   IF v_boolean THEN
+      DBMS_OUTPUT.PUT_LINE('Boolean: TRUE');
+   ELSE
+      DBMS_OUTPUT.PUT_LINE('Boolean: FALSE');
+   END IF;
+
+   -- 输出日期和时间戳类型
+   DBMS_OUTPUT.PUT_LINE('Date: ' || TO_CHAR(v_date, 'YYYY-MM-DD HH24:MI:SS'));
+   DBMS_OUTPUT.PUT_LINE('Timestamp: ' || TO_CHAR(v_timestamp, 'YYYY-MM-DD HH24:MI:SS.FF'));
+
+END;
+）
+
+2.2复合数据类型
+2.2.1记录类型（RECORD）
+DECLARE
+   -- 定义一个记录类型
+   TYPE employee_record IS RECORD (
+      emp_id    NUMBER(6),
+      emp_name  VARCHAR2(50),
+      salary    NUMBER(8,2),
+      hire_date DATE
+   );
+   
+   -- 声明一个基于记录类型的变量
+   v_employee employee_record;
+BEGIN
+   -- 给记录变量赋值
+   v_employee.emp_id := 101;
+   v_employee.emp_name := 'John Doe';
+   v_employee.salary := 5000.50;
+   v_employee.hire_date := SYSDATE;
+   
+   -- 输出记录的字段
+   DBMS_OUTPUT.PUT_LINE('Employee ID: ' || v_employee.emp_id);
+   DBMS_OUTPUT.PUT_LINE('Employee Name: ' || v_employee.emp_name);
+   DBMS_OUTPUT.PUT_LINE('Salary: ' || v_employee.salary);
+   DBMS_OUTPUT.PUT_LINE('Hire Date: ' || TO_CHAR(v_employee.hire_date, 'YYYY-MM-DD'));
+END;
+
+
+2.2.2集合类型（TABLE, VARRAY, ASSOCIATIVE ARRAY）
+----table类型
+DECLARE
+   -- 定义嵌套表类型
+   TYPE number_table IS TABLE OF NUMBER;
+   
+   -- 声明一个基于嵌套表类型的变量
+   v_numbers number_table := number_table();
+BEGIN
+   -- 给嵌套表添加元素
+   v_numbers.EXTEND; -- 扩展嵌套表的大小
+   v_numbers(1) := 100;
+
+   v_numbers.EXTEND;
+   v_numbers(2) := 200;
+
+   v_numbers.EXTEND;
+   v_numbers(3) := 300;
+   
+   -- 输出嵌套表的元素
+   FOR i IN 1..v_numbers.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE('Number: ' || v_numbers(i));
+   END LOOP;
+END;
+
+
+--array数组
+DECLARE
+   -- 定义一个 VARRAY 类型，最多包含 5 个数字
+   TYPE number_varray IS VARRAY(5) OF NUMBER;
+   
+   -- 声明一个基于 VARRAY 类型的变量
+   v_numbers number_varray := number_varray(100, 200, 300);
+BEGIN
+   -- 输出 VARRAY 的元素
+   FOR i IN 1..v_numbers.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE('Number: ' || v_numbers(i));
+   END LOOP;
+   
+   -- 更新 VARRAY 的元素
+   v_numbers(2) := 250;
+   DBMS_OUTPUT.PUT_LINE('Updated second element: ' || v_numbers(2));
+END;
+
+
+
+2.2.3游标：看另一篇关于游标的详细讲解
+2.2.4大对象类型：如 BLOB、CLOB
+
+
+3.运算符与表达式
+算术运算符：+、-、*、/、**（乘方）
+比较运算符：=、!=、<>、>、<、>=、<=
+逻辑运算符：AND、OR、NOT
+字符串运算符：||（连接符）
+
+
+4.数据类型转换
+4.1显式转换
+TO_CHAR：将数值或日期转换为字符串
+v_str := TO_CHAR(v_number);
+v_date_str := TO_CHAR(v_date, 'YYYY-MM-DD');
+
+TO_NUMBER：将字符串转换为数值。
+v_number := TO_NUMBER(v_str);
+
+TO_DATE：将字符串转换为日期。
+v_date := TO_DATE('2024-01-01', 'YYYY-MM-DD');
+
+4.2隐式转换
+DECLARE
+  v_number NUMBER := 100;
+  v_str    VARCHAR2(10);
+BEGIN
+  v_str := v_number; -- 隐式转换，将NUMBER转换为VARCHAR2
+  DBMS_OUTPUT.PUT_LINE('String Value: ' || v_str);
+END;
+
+
+
