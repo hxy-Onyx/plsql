@@ -1,0 +1,52 @@
+create table employees(
+employee_id number,
+employee_name varchar(20),
+department_id number,
+salary number
+)Tablespace MY_TABLESPACE;
+
+CREATE TABLE departments(
+department_id NUMBER,
+	department_name VARCHAR2(20)
+)Tablespace MY_TABLESPACE;
+
+
+INSERT INTO employees VALUES(1,'Alice',10,7000);
+INSERT INTO employees VALUES(2,'Bob',20,6000);
+INSERT INTO employees VALUES(3,'Charlie',10,5500);
+INSERT INTO employees VALUES(4,'Diana',30,6200);
+INSERT INTO employees VALUES(5,'Eve',20,5800);
+
+INSERT INTO departments VALUES(10,'Engineering');
+INSERT INTO departments VALUES(20,'Sales');
+INSERT INTO departments VALUES(30,'HR ');
+INSERT INTO departments VALUES(40,'Marketing');
+
+--使用内连接查询工资大于5000的员工姓名、部门名称和工资，并将结果输出到控制台。
+
+DECLARE
+V_EMP_NAME employees.employee_name%type;
+V_DEPT_NAME departments.department_name%type;
+V_SALARY employees.salary%type;
+
+cursor emp_dept_cur is 
+select e.employee_name,e.department_id,e.salary 
+from employees e,departments d where e.department_id= d.department_id;
+
+begin
+  open emp_dept_cur;
+  loop
+     FETCH emp_dept_cur INTO V_EMP_NAME, V_DEPT_NAME, V_SALARY;
+        EXIT WHEN emp_dept_cur%NOTFOUND;
+     DBMS_OUTPUT.PUT_LINE('员工姓名：' || V_EMP_NAME ||
+                             ', 部门：' || V_DEPT_NAME ||
+                             ', 工资：' || V_SALARY);
+                             
+  end loop;
+exception 
+  when others then
+     DBMS_OUTPUT.PUT_LINE('发生错误：' || SQLERRM);
+        IF emp_dept_cur%ISOPEN THEN
+            CLOSE emp_dept_cur;
+        END IF;
+end;
