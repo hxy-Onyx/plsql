@@ -30,7 +30,7 @@ V_DEPT_NAME departments.department_name%type;
 V_SALARY employees.salary%type;
 
 cursor emp_dept_cur is 
-select e.employee_name,e.department_id,e.salary 
+select e.employee_name,d.department_name,e.salary 
 from employees e,departments d where e.department_id= d.department_id;
 
 begin
