@@ -1,1 +1,44 @@
+集合类型（TABLE, VARRAY, ASSOCIATIVE ARRAY）
 
+----table类型
+DECLARE
+   -- 定义嵌套表类型
+   TYPE number_table IS TABLE OF NUMBER;
+   
+   -- 声明一个基于嵌套表类型的变量
+   v_numbers number_table := number_table();
+BEGIN
+   -- 给嵌套表添加元素
+   v_numbers.EXTEND; -- 扩展嵌套表的大小
+   v_numbers(1) := 100;
+
+   v_numbers.EXTEND;
+   v_numbers(2) := 200;
+
+   v_numbers.EXTEND;
+   v_numbers(3) := 300;
+   
+   -- 输出嵌套表的元素
+   FOR i IN 1..v_numbers.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE('Number: ' || v_numbers(i));
+   END LOOP;
+END;
+
+
+--array数组
+DECLARE
+   -- 定义一个 VARRAY 类型，最多包含 5 个数字
+   TYPE number_varray IS VARRAY(5) OF NUMBER;
+   
+   -- 声明一个基于 VARRAY 类型的变量
+   v_numbers number_varray := number_varray(100, 200, 300);
+BEGIN
+   -- 输出 VARRAY 的元素
+   FOR i IN 1..v_numbers.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE('Number: ' || v_numbers(i));
+   END LOOP;
+   
+   -- 更新 VARRAY 的元素
+   v_numbers(2) := 250;
+   DBMS_OUTPUT.PUT_LINE('Updated second element: ' || v_numbers(2));
+END;
