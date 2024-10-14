@@ -1,1 +1,39 @@
+如何把转账过程写成函数和存储过程
+DECLARE
+  v_balance_a Accounts.Balance%TYPE;
+BEGIN
+  -- 查询账户A的余额并锁定该行
+  SELECT balance INTO v_balance_a
+  FROM Accounts
+  WHERE account_id = 'A123'
+  FOR UPDATE;
 
+  -- 检查余额是否足够
+  IF v_balance_a < 100 THEN
+    RAISE_APPLICATION_ERROR(-20001, '账户A余额不足。');
+  END IF;
+
+  -- 扣除账户A的余额
+  UPDATE Accounts 
+  SET balance = balance - 100
+  WHERE account_id = 'A123';
+
+  -- 向账户B存款
+  UPDATE Accounts 
+  SET balance = balance + 100
+  WHERE account_id = 'B456';
+
+  -- 记录转账
+  INSERT INTO Transfers (transfer_id, from_account, to_account, amount, transfer_date)
+  VALUES ('T789', 'A123', 'B456', 100, SYSDATE);
+  DBMS_OUTPUT.PUT_LINE('转账结束');
+  -- 提交事务
+  COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    -- 出现任何错误时，回滚事务
+    ROLLBACK;
+    -- 输出错误信息
+    DBMS_OUTPUT.PUT_LINE('转账失败，事务已回滚。错误: ' || SQLERRM);
+END;
