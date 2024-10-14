@@ -1,3 +1,31 @@
+-- 创建员工表 (employees)
+CREATE TABLE employees (
+    employee_id INT PRIMARY KEY,          -- 员工ID，主键
+    employee_name VARCHAR2(20),           -- 员工姓名
+    department_id INT,                    -- 部门ID
+    salary INT                            -- 员工薪水
+);
+
+-- 创建部门表 (departments)
+CREATE TABLE departments (
+    department_id INT PRIMARY KEY,        -- 部门ID，主键
+    department_name VARCHAR2(20)          -- 部门名称
+);
+
+-- 插入数据到员工表
+INSERT INTO employees (employee_id, employee_name, department_id, salary) VALUES (1,'Alice',10,7000);
+INSERT INTO employees (employee_id, employee_name, department_id, salary) VALUES (2,'Bob',20,6000);
+INSERT INTO employees (employee_id, employee_name, department_id, salary) VALUES (3,'Charlie',10,5500);
+INSERT INTO employees (employee_id, employee_name, department_id, salary) VALUES (4,'Diana',30,6200);
+INSERT INTO employees (employee_id, employee_name, department_id, salary) VALUES (5,'Eve',20,5800);
+INSERT INTO employees (employee_id, employee_name, salary) VALUES (6, 'John Doe', NULL, 5000);
+
+-- 插入数据到部门表
+INSERT INTO departments (department_id, department_name) VALUES (10,'Engineering');
+INSERT INTO departments (department_id, department_name) VALUES (20,'Sales');
+INSERT INTO departments (department_id, department_name) VALUES (30,'HR');
+INSERT INTO departments (department_id, department_name) VALUES (40,'Marketing');
+
 1.左外连接
 2.右外连接
 3.全外连接
