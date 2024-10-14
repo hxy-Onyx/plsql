@@ -1,1 +1,24 @@
-
+DECLARE
+   -- 定义一个记录类型
+   TYPE employee_record IS RECORD (
+      emp_id    NUMBER(6),
+      emp_name  VARCHAR2(50),
+      salary    NUMBER(8,2),
+      hire_date DATE
+   );
+   
+   -- 声明一个基于记录类型的变量
+   v_employee employee_record;
+BEGIN
+   -- 给记录变量赋值
+   v_employee.emp_id := 101;
+   v_employee.emp_name := 'John Doe';
+   v_employee.salary := 5000.50;
+   v_employee.hire_date := SYSDATE;
+   
+   -- 输出记录的字段
+   DBMS_OUTPUT.PUT_LINE('Employee ID: ' || v_employee.emp_id);
+   DBMS_OUTPUT.PUT_LINE('Employee Name: ' || v_employee.emp_name);
+   DBMS_OUTPUT.PUT_LINE('Salary: ' || v_employee.salary);
+   DBMS_OUTPUT.PUT_LINE('Hire Date: ' || TO_CHAR(v_employee.hire_date, 'YYYY-MM-DD'));
+END;
