@@ -1,9 +1,9 @@
 1.plsql的基本语法
-DECLARE
+DECLARE（可选）
     -- 声明部分：声明变量、常量、游标等
-BEGIN
+BEGIN（必须）
     -- 执行部分：包含 SQL 语句和 PL/SQL 语句
-EXCEPTION
+EXCEPTION（可选）
     -- 异常处理部分：处理运行时错误
 END;
 
