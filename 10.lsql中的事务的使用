@@ -1,0 +1,76 @@
+CREATE TABLE Accounts (
+    account_id VARCHAR2(10) PRIMARY KEY,
+    balance number NOT NULL   
+    )tablespace my_tablespace;   
+
+
+CREATE TABLE Transfers (
+    transfer_id VARCHAR2(10) PRIMARY KEY, 
+    from_account VARCHAR2(10) NOT NULL,   
+    to_account VARCHAR2(10) NOT NULL,     
+    amount number NOT NULL,        
+    transfer_date TIMESTAMP DEFAULT SYSDATE,   
+    FOREIGN KEY (from_account) REFERENCES Accounts(account_id),
+     FOREIGN KEY (to_account) REFERENCES Accounts(account_id)
+)tablespace my_tablespace;
+
+-- 插入账户数据
+INSERT INTO Accounts  VALUES ('A123', 500.00);
+INSERT INTO Accounts  VALUES ('B456', 300.00);
+INSERT INTO Accounts  VALUES ('C789', 1000.00);
+
+-- 插入转账记录数据
+INSERT INTO Transfers (transfer_id, from_account, to_account, amount)
+VALUES ('T001', 'A123', 'B456', 100.00);
+
+INSERT INTO Transfers (transfer_id, from_account, to_account, amount)
+VALUES ('T002', 'C789', 'A123', 200.00);
+
+--从账户A123中向B456中转账100元
+select*from Accounts;
+select*from Transfers;
+delete from Transfers where transfer_id='T789';
+
+
+DECLARE
+  v_balance_a Accounts.Balance%TYPE;
+BEGIN
+  -- 查询账户A的余额并锁定该行
+  SELECT balance INTO v_balance_a
+  FROM Accounts
+  WHERE account_id = 'A123'
+  FOR UPDATE;
+
+  -- 检查余额是否足够
+  IF v_balance_a < 100 THEN
+    RAISE_APPLICATION_ERROR(-20001, '账户A余额不足。');
+  END IF;
+
+  -- 扣除账户A的余额
+  UPDATE Accounts 
+  SET balance = balance - 100
+  WHERE account_id = 'A123';
+
+  -- 向账户B存款
+  UPDATE Accounts 
+  SET balance = balance + 100
+  WHERE account_id = 'B456';
+
+  -- 记录转账
+  INSERT INTO Transfers (transfer_id, from_account, to_account, amount, transfer_date)
+  VALUES ('T789', 'A123', 'B456', 100, SYSDATE);
+  DBMS_OUTPUT.PUT_LINE('转账结束');
+  -- 提交事务
+  COMMIT;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    -- 出现任何错误时，回滚事务
+    ROLLBACK;
+    -- 输出错误信息
+    DBMS_OUTPUT.PUT_LINE('转账失败，事务已回滚。错误: ' || SQLERRM);
+END;
+
+
+
+
