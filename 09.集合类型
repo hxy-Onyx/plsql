@@ -99,6 +99,68 @@ BEGIN
     END LOOP;
 END;
 
+3.可变数组
+特点：
+有序集合，元素按照插入的顺序存储。
+数组的大小是固定的，声明时指定最大容量，超过容量后不能再插入新元素。
+必须初始化：VARRAY必须先初始化，才能对其进行赋值。
+不能使用EXTEND：VARRAY不支持EXTEND方法扩展元素数量，但是在动态扩展和赋值时使用
+
+3.1基本语法
+TYPE type_name IS VARRAY(max_size) OF element_type;
+
+3.2常用方法
+COUNT：返回集合中当前元素的个数。
+EXTEND：向集合的末尾增加元素（嵌套表和VARRAY）。
+DELETE：从集合中删除元素（嵌套表和索引表）。
+EXISTS(n)：判断集合的第n个元素是否存在。
+FIRST 和 LAST：返回集合的第一个和最后一个索引
+
+3.3可变函数在赋值时常出现的问题
+3.3.1 初始化时赋值：声明 VARRAY 变量时直接赋值   
+DECLARE
+    TYPE num_varray IS VARRAY(5) OF NUMBER;  -- 定义最多存储 5 个 NUMBER 类型元素的 VARRAY
+    my_varray num_varray := num_varray(100, 200, 300);  -- 初始化时赋值
+BEGIN
+    -- 输出 VARRAY 中的第一个元素
+    DBMS_OUTPUT.PUT_LINE('第一个元素：' || my_varray(1));
+END;
+3.3.2 初始化时不赋值：声明 VARRAY 变量时不赋值，之后在代码中动态赋值
+DECLARE
+    TYPE num_varray IS VARRAY(5) OF NUMBER;  -- 定义 VARRAY 类型
+    my_varray num_varray;  -- 声明 VARRAY 变量，但不初始化
+BEGIN
+    -- 初始化 VARRAY 变量
+    my_varray := num_varray();  -- 空的初始化
+
+    -- 动态赋值
+    my_varray.EXTEND(3);  -- 扩展数组，增加 3 个元素
+    my_varray(1) := 100;
+    my_varray(2) := 200;
+    my_varray(3) := 300;
+
+    -- 输出元素
+    DBMS_OUTPUT.PUT_LINE('第一个元素：' || my_varray(1));
+END;
 
 
+3.3.3 动态赋值和扩展
+
+VARRAY 的大小是固定的（在声明时定义的最大值），你可以使用 EXTEND 方法来动态增加元素，但只能在未达到 VARRAY 定义的最大容量时进行扩展
+DECLARE
+    TYPE num_varray IS VARRAY(5) OF NUMBER;  -- 定义 VARRAY 类型，最多 5 个元素
+    my_varray num_varray := num_varray();  -- 初始化为空的 VARRAY
+BEGIN
+    -- 动态扩展和赋值
+    my_varray.EXTEND(2);  -- 扩展数组，增加 2 个元素
+    my_varray(1) := 500;
+    my_varray(2) := 1000;
+
+    -- 输出元素
+    DBMS_OUTPUT.PUT_LINE('第一个元素：' || my_varray(1));
+    DBMS_OUTPUT.PUT_LINE('第二个元素：' || my_varray(2));
+
+    -- 尝试扩展超过最大容量时会报错
+    -- my_varray.EXTEND(4);  -- 错误：会超过 VARRAY 的定义容量
+END;
 
