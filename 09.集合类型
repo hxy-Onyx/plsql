@@ -8,6 +8,7 @@ a.需要索引:可以是整数或字符串
 b.不需要提前定义表大小，可以动态扩展
 c.访问时按索引访问
 d.适合快速查找和更新的场合
+e.不能存储在数据库中
 举例：
 基本的语法：
 TYPE 名字 IS TABLE OF 元素类型 INDEX BY 索引类型;
@@ -50,4 +51,54 @@ exception
   when others then
     dbms_output.put_line('出现错误'||sqlerrm);
 end;
+
+2.嵌套表
+a.嵌套表是无序的，元素可以重复。
+b.集合的大小是动态的
+c.可以使用集合的方法（如EXTEND、DELETE等）来管理元素。
+
+2.1常用的方法：
+EXTEND：扩展嵌套表，增加元素。
+DELETE：删除某个元素或所有元素。
+TRIM：从嵌套表末尾删除元素。
+COUNT：返回嵌套表中当前元素的个数。
+
+2.2基本语法：
+TYPE 表名 IS TABLE OF 元素类型;
+
+举例：
+DECLARE
+    -- 定义嵌套表类型，存储一组NUMBER类型的数据
+    TYPE num_table IS TABLE OF NUMBER;
+
+    -- 声明嵌套表变量
+    my_numbers num_table := num_table(); -- 初始化为空的嵌套表
+BEGIN
+    -- 使用 EXTEND 方法扩展嵌套表
+    my_numbers.EXTEND(3);  -- 扩展嵌套表，增加3个元素
+    my_numbers(1) := 100;  -- 第一个元素
+    my_numbers(2) := 200;  -- 第二个元素
+    my_numbers(3) := 300;  -- 第三个元素
+
+    -- 打印嵌套表的元素
+    FOR i IN 1..my_numbers.COUNT LOOP
+        DBMS_OUTPUT.PUT_LINE('元素 ' || i || ': ' || my_numbers(i));
+    END LOOP;
+
+    -- 删除第二个元素
+    my_numbers.DELETE(2);
+    DBMS_OUTPUT.PUT_LINE('第二个元素被删除。');
+
+    -- 再次遍历嵌套表，打印元素
+    FOR i IN 1..my_numbers.COUNT LOOP
+        IF my_numbers.EXISTS(i) THEN
+            DBMS_OUTPUT.PUT_LINE('元素 ' || i || ': ' || my_numbers(i));
+        ELSE
+               DBMS_OUTPUT.PUT_LINE('元素 ' || i || ': 被删除');
+        END IF;
+    END LOOP;
+END;
+
+
+
 
