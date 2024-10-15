@@ -1,44 +1,53 @@
-集合类型（TABLE, VARRAY, ASSOCIATIVE ARRAY）
+1.索引表
+2.嵌套表
+3.可变数组
 
-----table类型
-DECLARE
-   -- 定义嵌套表类型
-   TYPE number_table IS TABLE OF NUMBER;
-   
-   -- 声明一个基于嵌套表类型的变量
-   v_numbers number_table := number_table();
-BEGIN
-   -- 给嵌套表添加元素
-   v_numbers.EXTEND; -- 扩展嵌套表的大小
-   v_numbers(1) := 100;
+1.索引表一般以键值对的方式存在
+特征
+a.需要索引:可以是整数或字符串
+b.不需要提前定义表大小，可以动态扩展
+c.访问时按索引访问
+d.适合快速查找和更新的场合
+举例：
+基本的语法：
+TYPE 名字 IS TABLE OF 元素类型 INDEX BY 索引类型;
+declare
+//一般PLS_INTEGER和varchar2()表示类型
+type employee_salary_table is table of number index by PLS_INTEGER;
+//定义表之后一定要声明一个表对象
+employee_salary employee_salary_table;
+begin
+-- 初始化数据，注意是通过变量名而不是类型名
+   employee_salary(1):=1000;
+   employee_salary(2):=2000;
+   employee_salary(3):=3000;
+     
+   DBMS_OUTPUT.PUT_LINE('Salary of no.1: ' || employee_salary(1));
+   DBMS_OUTPUT.PUT_LINE('Salary of no.2: ' || employee_salary(2));
+   DBMS_OUTPUT.PUT_LINE('Salary of no.3: ' || employee_salary(3));
+exception 
+  when others then
+    dbms_output.put_line('出现错误'||sqlerrm);
+end;
 
-   v_numbers.EXTEND;
-   v_numbers(2) := 200;
+如果想使用循环的方式将表输出：不能直接使用循环，
 
-   v_numbers.EXTEND;
-   v_numbers(3) := 300;
-   
-   -- 输出嵌套表的元素
-   FOR i IN 1..v_numbers.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE('Number: ' || v_numbers(i));
-   END LOOP;
-END;
+declare
+type employee_salary_table is table of number index by PLS_INTEGER;
+employee_salary employee_salary_table;
+v_key number;
+begin
+   employee_salary(1):=1000;
+   employee_salary(2):=2000;
+   employee_salary(3):=3000;
+     
+   v_key:=employee_salary.FIRST; 
+   while v_key is not null loop
+     DBMS_OUTPUT.PUT_LINE('Salary of ' || v_key || ': ' || employee_salary(v_key));
+        v_key := employee_salary.NEXT(v_key);
+    end loop;
+exception 
+  when others then
+    dbms_output.put_line('出现错误'||sqlerrm);
+end;
 
-
---array数组
-DECLARE
-   -- 定义一个 VARRAY 类型，最多包含 5 个数字
-   TYPE number_varray IS VARRAY(5) OF NUMBER;
-   
-   -- 声明一个基于 VARRAY 类型的变量
-   v_numbers number_varray := number_varray(100, 200, 300);
-BEGIN
-   -- 输出 VARRAY 的元素
-   FOR i IN 1..v_numbers.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE('Number: ' || v_numbers(i));
-   END LOOP;
-   
-   -- 更新 VARRAY 的元素
-   v_numbers(2) := 250;
-   DBMS_OUTPUT.PUT_LINE('Updated second element: ' || v_numbers(2));
-END;
