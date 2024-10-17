@@ -1,0 +1,18 @@
+declare                    //这里不需要括号包裹
+  cursor emp_cur is select emp_id,emp_name,salary from employees ;
+  
+ 
+begin
+
+  //使用了for循环不需要显示的open游标
+  for cur_emp in emp_cur loop
+    
+    dbms_output.put_line('员工id：'||cur_emp.emp_id||'员工姓名：'
+    ||cur_emp.emp_name||'员工工资：'||cur_emp.salary);
+    
+   end loop;
+exception 
+  when others then
+    dbms_output.put_line('出现错误：'||sqlerrm);
+    
+end;
