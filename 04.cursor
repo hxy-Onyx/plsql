@@ -92,6 +92,7 @@ BEGIN
     CLOSE emp_cursor;
 END;
 
+如果是普通的方法的话，需要自己open游标，如果是for循环那么不需要自己open
 
 3.游标 FOR 循环：游标FOR循环是一种简化的游标处理方式，无需显式地打开、获取和关闭游标。
   举例：
@@ -166,40 +167,8 @@ BEGIN
     CLOSE v_emp_cursor;
 END;
 
-6.游标属性
-6.1 常用游标属性
-cursor_name%FOUND
-cursor_name%NOTFOUND
-cursor_name%ROWCOUNT
-cursor_name%ISOPEN
 
-举例：
-DECLARE
-    CURSOR emp_cursor IS
-        SELECT employee_id FROM employees WHERE department_id = 10;
-    v_emp_id employees.employee_id%TYPE;
-BEGIN
-    OPEN emp_cursor;
-
-    LOOP
-        FETCH emp_cursor INTO v_emp_id;
-
-        EXIT WHEN emp_cursor%NOTFOUND;
-
-        DBMS_OUTPUT.PUT_LINE('员工ID: ' || v_emp_id);
-        DBMS_OUTPUT.PUT_LINE('已提取行数: ' || emp_cursor%ROWCOUNT);
-    END LOOP;
-
-    IF emp_cursor%ISOPEN THEN
-        DBMS_OUTPUT.PUT_LINE('游标仍然打开。');
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('游标已关闭。');
-    END IF;
-
-    CLOSE emp_cursor;
-END;
-
-7. 异常处理中的游标：在处理异常时，确保游标被正确关闭以释放资源。
+6. 异常处理中的游标：在处理异常时，确保游标被正确关闭以释放资源。
 
   DECLARE
     CURSOR emp_cursor IS
@@ -230,8 +199,4 @@ EXCEPTION
         RAISE;
 END;
 
-8. 游标的使用建议
-资源管理：始终确保游标在使用后被关闭，特别是在异常处理块中。
-性能考虑：避免在循环中频繁打开和关闭游标，这会影响性能。
-简化代码：能使用游标FOR循环的情况下，尽量使用它来简化代码。
-类型匹配：在声明游标变量时，使用表列的%TYPE或%ROWTYPE，确保类型
+
