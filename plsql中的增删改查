@@ -1,0 +1,40 @@
+在PL/SQL块中，增、删、改操作通常是在BEGIN块中执行的
+而查询操作可以在BEGIN块中，也可以单独使用SELECT INTO来将查询结果存储到变量中
+
+1. INSERT 插入数据：
+举例：
+BEGIN
+    INSERT INTO table_name (column1, column2, ...)
+    VALUES (value1, value2, ...);
+    COMMIT;
+END;
+
+2. UPDATE 更新数据：
+BEGIN
+    UPDATE table_name
+    SET column1 = value1, column2 = value2
+    WHERE condition;
+    COMMIT;
+END;
+
+3. DELETE 删除数据：
+BEGIN
+    DELETE FROM table_name
+    WHERE condition;
+    COMMIT;
+END;
+
+4. SELECT INTO 查询数据并存储到变量中：
+DECLARE
+    v_column1 table_name.column1%TYPE;
+BEGIN
+    SELECT column1
+    INTO v_column1
+    FROM table_name
+    WHERE condition;
+END;
+
+
+注意事项：
+增删改操作需要手动使用 COMMIT; 来提交事务。
+查询操作使用 SELECT INTO，并且确保查询的结果返回单行，否则会抛出异常。
