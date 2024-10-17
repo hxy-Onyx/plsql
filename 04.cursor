@@ -66,13 +66,6 @@ END;
 获取数据：从游标中逐行提取数据。
 关闭游标：释放游标相关的资源。
   
-游标属性：
-cursor_name%FOUND：FETCH后，如果成功获取到数据，则返回TRUE。
-cursor_name%NOTFOUND：FETCH后，如果未获取到数据，则返回TRUE。
-cursor_name%ROWCOUNT：返回已获取的行数。
-cursor_name%ISOPEN：如果游标已打开，则返回TRUE
-
-
 DECLARE
     -- 声明游标
     CURSOR emp_cursor IS
