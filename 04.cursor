@@ -6,20 +6,58 @@ SQL%NOTFOUND：如果DML语句没有影响任何行或SELECT INTO未返回数据
 SQL%ROWCOUNT：返回DML语句影响的行数。
 SQL%ISOPEN：总是返回FALSE，因为隐式游标在执行后立即关闭。
 
-使用方式：
-DECLARE
-    v_emp_id employees.employee_id%TYPE;
-BEGIN
-    -- 使用SELECT INTO语句（隐式游标）
-    SELECT employee_id INTO v_emp_id FROM employees WHERE last_name = '张三';
 
-    IF SQL%FOUND THEN
-        DBMS_OUTPUT.PUT_LINE('员工ID: ' || v_emp_id);
-        DBMS_OUTPUT.PUT_LINE('受影响的行数: ' || SQL%ROWCOUNT);
-    ELSE
-        DBMS_OUTPUT.PUT_LINE('未找到匹配的员工。');
+属性的使用举例：
+DECLARE
+  CURSOR emp_cur IS 
+    SELECT emp_id, emp_name, salary FROM employees;
+    
+  -- 变量声明
+  v_emp_id employees.emp_id%TYPE;
+  v_emp_name employees.emp_name%TYPE;
+  v_salary employees.salary%TYPE;
+BEGIN
+  -- 打开游标
+  OPEN emp_cur;
+  
+  -- 检查游标是否打开
+  IF emp_cur%ISOPEN THEN
+    DBMS_OUTPUT.PUT_LINE('游标已打开');
+  END IF;
+  
+  -- 使用循环获取数据
+  LOOP
+    -- 提取游标中的一行数据
+    FETCH emp_cur INTO v_emp_id, v_emp_name, v_salary;
+    
+    -- 检查是否获取到了数据
+    EXIT WHEN emp_cur%NOTFOUND;
+    
+    -- 输出当前行数据
+    DBMS_OUTPUT.PUT_LINE('员工ID: ' || v_emp_id || ', 姓名: ' || v_emp_name || ', 工资: ' || v_salary);
+    
+    -- 输出已处理行数
+    DBMS_OUTPUT.PUT_LINE('处理行数: ' || emp_cur%ROWCOUNT);
+  END LOOP;
+
+  -- 关闭游标
+  CLOSE emp_cur;
+
+  -- 检查游标是否关闭
+  IF NOT emp_cur%ISOPEN THEN
+    DBMS_OUTPUT.PUT_LINE('游标已关闭');
+  END IF;
+
+EXCEPTION
+  -- 捕获异常
+  WHEN OTHERS THEN
+    DBMS_OUTPUT.PUT_LINE('出现错误: ' || SQLERRM);
+    IF emp_cur%ISOPEN THEN
+      CLOSE emp_cur;
     END IF;
 END;
+
+
 
 2.显示游标：自己创建的游标：使用cursor关键字
   基本流程：
