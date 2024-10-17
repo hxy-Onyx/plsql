@@ -1,0 +1,83 @@
+
+declare
+
+cursor emp_cur is select emp_id,emp_name,salary from employees;
+
+  v_emp_id employees.emp_id%TYPE;
+  v_emp_name employees.emp_name%TYPE;
+  v_salary employees.salary%TYPE;
+
+begin 
+  open emp_cur;
+  if emp_cur%isopen then
+    dbms_output.put_line('游标已打开');
+   end if;
+   
+  loop 
+    fetch emp_cur into v_emp_id, v_emp_name, v_salary;
+    
+    EXIT WHEN emp_cur%NOTFOUND;
+     DBMS_OUTPUT.PUT_LINE('员工ID: ' || v_emp_id || ', 姓名: ' 
+     || v_emp_name||'员工工资：'||v_salary);
+     
+  end loop;
+  
+ exception 
+   when others then 
+     dbms_output.put_line('发现异常：'||sqlerrm);
+     
+  close emp_cur;
+  
+  if not emp_cur%isopen then 
+    dbms_output.put_line('游标已关闭');
+   end if;
+end;
+
+
+
+
+///////////这段代码中出现的错误
+1.exception要放到最后
+
+
+正确写法
+
+
+DECLARE
+    CURSOR emp_cur IS
+        SELECT emp_id, emp_name, salary FROM employees;
+
+    v_emp_id employees.emp_id%TYPE;
+    v_emp_name employees.emp_name%TYPE;
+    v_salary employees.salary%TYPE;
+
+BEGIN
+    OPEN emp_cur;
+    IF emp_cur%ISOPEN THEN
+        DBMS_OUTPUT.PUT_LINE('游标已打开');
+    END IF;
+   
+    LOOP
+        FETCH emp_cur INTO v_emp_id, v_emp_name, v_salary;
+        
+        EXIT WHEN emp_cur%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('员工ID: ' || v_emp_id || ', 姓名: ' 
+            || v_emp_name || '，员工工资：' || v_salary);
+    END LOOP;
+
+    -- 正常情况下在此关闭游标
+    CLOSE emp_cur;
+
+    IF NOT emp_cur%ISOPEN THEN
+        DBMS_OUTPUT.PUT_LINE('游标已关闭');
+    END IF;
+  
+EXCEPTION 
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('发现异常：' || SQLERRM);
+        
+        -- 如果有异常，也确保关闭游标
+        IF emp_cur%ISOPEN THEN
+            CLOSE emp_cur;
+        END IF;
+END;
