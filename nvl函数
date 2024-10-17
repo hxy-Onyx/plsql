@@ -1,0 +1,34 @@
+NVL(expr1, expr2)
+如果 expr1 不为 NULL，则返回 expr1 的值。
+如果 expr1 为 NULL，则返回第二个参数 expr2。
+
+使用场景：
+1.避免 NULL 值带来的问题
+当查询中出现 NULL 值时，如果不处理可能导致计算结果不符合预期。NVL 可以用来确保查询结果的稳定性。
+
+1.1假设你有一个员工工资的表，如果某些员工的奖金（bonus）字段为 NULL，而你需要将工资和奖金相加来计算总收入：
+SELECT employee_id, salary + NVL(bonus, 0) AS total_income
+FROM employees;
+
+1.2如果某个字段为空，我们可以将其替换为默认字符串：
+SELECT NVL(phone_number, 'No Phone Number') AS contact_info
+FROM employees;
+
+2.注意事项
+1.数据类型一致性 
+NVL 函数要求 expr1 和 expr2 的数据类型要兼容。如果两者的数据类型不同，可能会导致错误。
+例如，不能将一个字符串与数值直接混合使用。你可能需要显式地转换数据类型，
+NVL(TO_CHAR(number_column), 'Default String')
+
+
+3.进阶使用
+3.1 NVL 与聚合函数的结合
+SELECT department_id, SUM(NVL(salary, 0)) AS total_salary
+FROM employees
+GROUP BY department_id;
+3.2 NVL 与日期类型的结合
+SELECT order_id, NVL(delivery_date, SYSDATE) AS delivery_date
+FROM orders;
+3.3NVL 与多列判断
+SELECT NVL(address1, NVL(address2, NVL(address3, 'No Address Available'))) AS full_address
+FROM customers;
