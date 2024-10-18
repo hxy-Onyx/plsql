@@ -1,0 +1,60 @@
+输入: 
+Employee table:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
+| 2  | 200    |
+| 3  | 300    |
++----+--------+
+n = 2
+输出: 
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| 200                    |
++------------------------+
+示例 2:
+
+输入: 
+Employee 表:
++----+--------+
+| id | salary |
++----+--------+
+| 1  | 100    |
++----+--------+
+n = 2
+输出: 
++------------------------+
+| getNthHighestSalary(2) |
++------------------------+
+| null                   |
++------------------------+
+
+
+
+解题思路：创建一个函数：
+    CREATE FUNCTION getNthHighestSalary(N IN NUMBER) RETURN NUMBER IS
+    result NUMBER;
+    BEGIN
+        /* Write your PL/SQL query statement below */
+    select nvl(salary,null) into result
+    from (select distinct salary,rownum ronm 
+        from (
+                select distinct salary
+                from Employee order by salary desc    
+            )
+        where rownum<=N
+        )
+    where ronm=N;
+        RETURN result;
+    END;
+
+
+
+
+关键点：
+nvl函数和rownum
+多层查询
+
+
