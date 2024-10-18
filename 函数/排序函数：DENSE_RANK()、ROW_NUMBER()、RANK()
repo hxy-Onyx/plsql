@@ -1,0 +1,39 @@
+（一）.三者的区别
+1. RANK()
+RANK() 函数在处理相同排序值的行时，会为这些行分配相同的排名，但会在后续排名中跳过相应的数字。
+
+2. ROW_NUMBER()
+ROW_NUMBER() 函数为每一行分配一个唯一的顺序号，即使有相同的排序值，行号也会连续递增。
+
+3. DENSE_RANK()
+DENSE_RANK() 函数为具有相同排序值的行分配相同的排名，并且不会在后续排名中跳跃。
+
+区别
+使用 RANK() 和 DENSE_RANK()
+1	   John	5000
+2  	 Mary	6000
+3	   Alex	6000
+4	   Sarah	7000
+5   	Tom	7000
+6	    Emma	7000
+
+SELECT
+    employee_id,
+    first_name,
+    salary,
+    RANK() OVER (ORDER BY salary DESC) AS rank,
+    DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank
+FROM
+    employees;
+
+结果
+employee_id	first_name	salary	rank	dense_rank
+4          	Sarah	       7000    	1	    1
+5	           Tom	        7000   	1	     1
+6	            Emma	      7000	   1	   1
+2	            Mary	      6000	   4	    2
+3	           Alex        	6000	  4      2
+1	           John	        5000	   6	    3
+
+基本语法：
+
