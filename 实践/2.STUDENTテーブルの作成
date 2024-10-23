@@ -1,0 +1,24 @@
+									
+	システム名		学生管理						
+	テーブル名（論理名）		学生			作成者		更新者	
+	テーブル名（物理名）		STUDENT			作成日	2024年10月1日	更新日	2024年10月23日
+									
+	No	論理名	物理名	データ型	サイズ	NOT NULL	PK	初期値	備考
+	1	番号	STUDENT_NO	VARCHAR	8	〇	〇		
+	2	名前	NAME	NVARCHAR	50				
+	3	学年	GRADE	VARCHAR	1				
+	4	クラス番号	CLASS_NO	VARCHAR	2				
+	5	性別	SEX	VARCHAR	1				
+	6	身長	HEIGHT	NUMBER	5.3				
+	7	備考	COMMENT	NVARCHAR	200				
+create table STUDENT(
+STUDENT_NO  VARCHAR2(8) NOT NULL PRIMARY KEY ,
+NAME  VARCHAR2(50),
+GRADE VARCHAR2(1),
+CLASS_NO  VARCHAR2(2),
+SEX VARCHAR2(1),
+HEIGHT  NUMBER(3,2),
+COMMENT1  VARCHAR2(200)
+);						
+
+//
